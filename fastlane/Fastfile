@@ -1,0 +1,55 @@
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.9.0"
+
+default_platform :android
+
+platform :android do
+  before_all do
+   
+  end
+
+  desc "Runs build"
+  lane :build_local do |options|
+    gradle(task: "clean")
+    
+    gradle(
+      task: "assemble",
+      flavor: "Windows",
+      build_type: "Release",
+      flags: "--stacktrace"
+    )
+    
+    sign_apk(
+       keystore_path: "/Users/lonny/Workspace-Pic/android-keystores/android_flavors_sample_job.jks",
+       alias: "android_flavors",
+       storepass: options[:storepass],
+       keypass: options[:keypass],
+       tsa: "http://timestamp.comodoca.com/rfc316",
+    )
+
+    zipalign(apk_path: "#{lane_context[SharedValues::SIGNED_APK_PATH]}")
+
+  end
+
+  after_all do |lane|
+    
+  end
+
+  error do |lane, exception|
+    
+  end
+end
+
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+
+# More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# fastlane reports which actions are used
+# No personal data is sent or shared. Learn more at https://github.com/fastlane/enhancer
